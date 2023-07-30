@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Displays "To infinity and beyond" infinitely with
+#+ a sleep 2 in between each repititions.
+
+while true
+do
+  echo "To infinity and beyond"
+  sleep 2
+done
