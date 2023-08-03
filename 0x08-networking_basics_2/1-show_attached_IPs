@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Outputs every ips using ipv4 when executed
+
+hostname -I | cut -d' ' -f1 ; hostname -i
