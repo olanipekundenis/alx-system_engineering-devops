@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# script displays user status after running
+
+sudo -u "$1" whoami
