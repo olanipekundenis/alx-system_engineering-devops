@@ -1,40 +1,28 @@
 #!/usr/bin/python3
 """
-a recursive function that queries the Reddit API and returns a list containing
-the titles of all hot articles for a given subreddit. If no results are found
-for the given subreddit, the function should return None.
+Using reddit's API
 """
 import requests
+after = None
 
 
 def recurse(subreddit, hot_list=[]):
-    """
-    returns a list containing the titles of all hot articles
-    for a given subreddit
-    """
-    if type(subreddit) is list:
-        url = "https://api.reddit.com/r/{}?sort=hot".format(subreddit[0])
-        url = "{}&after={}".format(url, subreddit[1])
-    else:
-        url = "https://api.reddit.com/r/{}?sort=hot".format(subreddit)
-        subreddit = [subreddit, ""]
-    headers = {'User-Agent': 'CustomClient/1.0'}
-    response = requests.get(url, headers=headers, allow_redirects=False)
-    if response.status_code != 200:
-        return (None)
-    response = response.json()
-    if "data" in response:
-        data = response.get("data")
-        if not data.get("children"):
-            return (hot_list)
-        for post in data.get("children"):
-            hot_list += [post.get("data").get("title")]
-        if not data.get("after"):
-            return (hot_list)
-        subreddit[1] = data.get("after")
-        recurse(subreddit, hot_list)
-        if hot_list[-1] is None:
-            del hot_list[-1]
-        return (hot_list)
+    """returning top ten post titles recursively"""
+    global after
+    user_agent = {'User-Agent': 'api_advanced-project'}
+    url = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
+    parameters = {'after': after}
+    results = requests.get(url, params=parameters, headers=user_agent,
+                           allow_redirects=False)
+
+    if results.status_code == 200:
+        after_data = results.json().get("data").get("after")
+        if after_data is not None:
+            after = after_data
+            recurse(subreddit, hot_list)
+        all_titles = results.json().get("data").get("children")
+        for title_ in all_titles:
+            hot_list.append(title_.get("data").get("title"))
+        return hot_list
     else:
         return (None)
